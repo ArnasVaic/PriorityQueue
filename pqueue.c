@@ -12,16 +12,15 @@ node_t* create_node(void *data, size_t size, int64_t prio, int *errnum) {
 		return NULL;
 	}
 	
-	node->data.data = malloc(size);
+	node->data = malloc(size);
 	++malloc_cnt;
 	
-	if(node->data.data == NULL) {
+	if(node->data == NULL) {
 		if(errnum != NULL) *errnum = 1;
 		return NULL;
 	}
 	
-	memcpy(node->data.data, data, size);
-	node->data.size = size;
+	memcpy(node->data, data, size);
 	
 	node->next = NULL;
 	node->prio = prio;
@@ -34,8 +33,8 @@ void free_node(node_t **node, int* errnum) {
 		if(errnum != NULL) *errnum = 2;
 		return;
 	}
-	if((*node)->data.data != NULL) {
-		free((*node)->data.data);
+	if((*node)->data != NULL) {
+		free((*node)->data);
 		++free_cnt;
 	}
 	free(*node);
@@ -88,38 +87,47 @@ void pq_push(pqueue_t *pq, void* data, size_t size, int64_t prio, int *errnum) {
 	node->next = temp;
 }
 
-generic_t pq_pop(pqueue_t *pq, int *errnum) {
+void* pq_pop(pqueue_t *pq, int *errnum) {
 	if(pq == NULL) {
 		if(errnum != NULL) *errnum = 2;
-		generic_t data = {NULL, 0};
-		return data;
+		return NULL;
 	}
 	if(pq->head == NULL) {
 		if(errnum != NULL) *errnum = 3;
-		generic_t data = {NULL, 0};
-		return data;
+		return NULL;
 	}
 	
 	node_t *temp = pq->head;
-	generic_t data = temp->data;
+	void* data = temp->data;
 	pq->head = pq->head->next;
 	free(temp);
 	++free_cnt;
 	return data;
 }
 
-generic_t pq_peek(pqueue_t *pq, int *errnum) {
+void* pq_peek(pqueue_t *pq, int *errnum) {
 	if(pq == NULL) {
 		if(errnum != NULL) *errnum = 2;
-		generic_t data = {NULL, 0};
-		return data;
+		return NULL;
 	}
 	if(pq->head == NULL) {
 		if(errnum != NULL) *errnum = 3;
-		generic_t data = {NULL, 0};
-		return data;
+		return NULL;
 	}
 	return pq->head->data;
+}
+
+size_t pq_elem_count(pqueue_t *pq, int *errnum) {
+	if(pq == NULL) {
+		if(errnum != NULL) *errnum = 2;
+		return 0;
+	}
+	size_t i;
+	node_t *iter = pq->head;
+	for(i = 0; iter; ++i) {
+		iter = iter->next;
+	}
+	return i;
 }
 
 void free_pq(pqueue_t *pq, int *errnum) {

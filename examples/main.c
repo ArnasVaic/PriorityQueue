@@ -5,51 +5,27 @@
 void print_pq(pqueue_t *pq);
 
 int main(void) {
-	int vals[] = {4, 5, 1, 0, 2, 3, 7, 6};
-	int prio[] = {4, 5, 1, 0, 2, 3, 7, 6};
-
 	pqueue_t *pq = create_pq(NULL);
 
-	printf("priority queue is %sempty\n", is_pq_empty(pq, NULL)?"":"not ");
+	int a = 1, b = 2;
 
-	for(int i = 0; i < 8; ++i) {
-		pq_push(pq, vals + i, sizeof(int), prio[i], NULL);
-	}
+	pq_push(pq, &a, sizeof(int), 11, NULL);
 
-	print_pq(pq);
+	printf("size = %i\n", pq_elem_count(pq, NULL));
 
-	generic_t data = pq_peek(pq, NULL);
-	printf("peeked: [%p]->[%d]\n", data.data, *(int*)data.data);
+	pq_push(pq, &b, sizeof(int), 10, NULL);
 
-	print_pq(pq);
-
-	data = pq_pop(pq, NULL);
-	printf("poped: [%p]->[%d]\n", data.data, *(int*)data.data);
-	free(data.data);
-	++free_cnt;
+	printf("size = %i\n", pq_elem_count(pq, NULL));
 
 	print_pq(pq);
-
-	data = pq_peek(pq, NULL);
-	printf("peeked: [%p]->[%d]\n", data.data, *(int*)data.data);
-
-	print_pq(pq);
-
-	printf("priority queue is %sempty\n", is_pq_empty(pq, NULL)?"":"not ");
-
-	for(int i = 0; i < 7; ++i) {
-		data = pq_pop(pq, NULL);
-		printf("poped: [%p]->[%d]\n", data.data, *(int*)data.data);
-		free(data.data);
-		++free_cnt;
-	}
-
-	printf("priority queue is %sempty\n", is_pq_empty(pq, NULL)?"":"not ");
+	putc('\n', stdout);
+	int *c = pq_pop(pq, NULL);
+	
+	printf("size = %i\n", pq_elem_count(pq, NULL));
 
 	print_pq(pq);
 
 	free_pq(pq, NULL);
-	fprintf(stderr, "malloc count: %lld\nfree count: %lld\n", malloc_cnt, free_cnt);
 }
 
 void print_pq(pqueue_t *pq) {
@@ -60,7 +36,7 @@ void print_pq(pqueue_t *pq) {
 	}
 	node_t *iter = pq->head;
 	while(iter) {
-		int *ptr = iter->data.data;
+		int *ptr = iter->data;
 		printf("[%p]->[%d]\n", ptr, *ptr);
 		iter = iter->next;
 	}

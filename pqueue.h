@@ -5,18 +5,13 @@
 #include <stdint.h>
 #include <string.h>
 
+/// Used for debugging purposes
 extern size_t malloc_cnt;
 extern size_t free_cnt;
 
-// Data structure to store generic data
-typedef struct generic_t {
-	void *data;		// the actual data
-	size_t size;	// size of data
-} generic_t;
-
 // Node data structure for the priority queue
 typedef struct node_t {
-	generic_t data;
+	void* data;
 	int64_t prio;
 	struct node_t *next;
 } node_t;
@@ -50,13 +45,16 @@ void pq_push(pqueue_t *pq, void *data, size_t size, int64_t prio, int *errnum);
 /// @param pq pointer to priority queue
 /// @param errnum error number
 /// @return data of the element (must be freed manually)
-generic_t pq_pop(pqueue_t *pq, int *errnum);
+void* pq_pop(pqueue_t *pq, int *errnum);
 
 /// Peek an element with the highest priority in a priority queue
 /// @param pq pointer to priority queue
 /// @param errnum error number
 /// @return data of the element
-generic_t pq_peek(pqueue_t *pq, int *errnum);
+void* pq_peek(pqueue_t *pq, int *errnum);
+
+
+size_t pq_elem_count(pqueue_t *pq, int *errnum);
 
 /// Free memory allocated by priority queue
 /// @param pq pointer to priority queue
